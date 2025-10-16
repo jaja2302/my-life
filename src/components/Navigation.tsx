@@ -8,6 +8,11 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // Don't show navigation on login page
+  if (pathname === '/') {
+    return null;
+  }
+
   const navItems = [
     { href: '/dashboard', label: 'Home', icon: '🏠' },
     { href: '/timeline', label: 'Timeline', icon: '💕' },

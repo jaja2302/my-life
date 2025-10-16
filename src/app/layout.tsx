@@ -31,9 +31,7 @@ export default function RootLayout({
       >
         <DataProvider>
           <Navigation />
-          <div className="lg:ml-80">
-            {children}
-          </div>
+          {children}
         </DataProvider>
       </body>
     </html>

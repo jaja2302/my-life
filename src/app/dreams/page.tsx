@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useData } from '@/context/DataContext';
+import UploadModal from '@/components/UploadModal';
 
 interface Dream {
   id: number;
@@ -14,77 +16,13 @@ interface Dream {
 }
 
 export default function FutureDreams() {
-  const [dreams, setDreams] = useState<Dream[]>([]);
+  const { dreams } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [filter, setFilter] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
-
-  // Sample dreams
-  const sampleDreams: Dream[] = [
-    {
-      id: 1,
-      title: "Travel to Japan Together",
-      description: "Experience the cherry blossoms, try authentic ramen, and explore Tokyo's vibrant culture hand in hand.",
-      category: 'travel',
-      priority: 'high',
-      targetDate: "Spring 2025",
-      progress: 30,
-      steps: ["Save money", "Plan itinerary", "Book flights", "Learn basic Japanese"]
-    },
-    {
-      id: 2,
-      title: "Buy Our Dream Home",
-      description: "A cozy house with a garden, a reading nook, and a kitchen where we can cook together every day.",
-      category: 'home',
-      priority: 'high',
-      targetDate: "2026",
-      progress: 15,
-      steps: ["Save for down payment", "Research neighborhoods", "Get pre-approved", "Start house hunting"]
-    },
-    {
-      id: 3,
-      title: "Start a Family",
-      description: "Welcome little ones into our love story and watch them grow up surrounded by our love.",
-      category: 'family',
-      priority: 'medium',
-      targetDate: "2027",
-      progress: 5,
-      steps: ["Discuss timeline", "Prepare financially", "Create a loving home", "Plan for the future"]
-    },
-    {
-      id: 4,
-      title: "Learn to Dance Together",
-      description: "Take ballroom dancing lessons and surprise everyone at our next anniversary party.",
-      category: 'adventure',
-      priority: 'low',
-      targetDate: "Summer 2024",
-      progress: 0,
-      steps: ["Find a dance studio", "Book lessons", "Practice at home", "Plan surprise performance"]
-    },
-    {
-      id: 5,
-      title: "Start a Business Together",
-      description: "Turn our shared passion into a business that allows us to work side by side every day.",
-      category: 'career',
-      priority: 'medium',
-      targetDate: "2025",
-      progress: 10,
-      steps: ["Identify our passion", "Research market", "Create business plan", "Launch together"]
-    },
-    {
-      id: 6,
-      title: "Visit All 7 Continents",
-      description: "Embark on the ultimate adventure and explore every continent together, creating memories worldwide.",
-      category: 'travel',
-      priority: 'low',
-      targetDate: "2030",
-      progress: 0,
-      steps: ["Plan continent order", "Save for each trip", "Research destinations", "Start with Antarctica"]
-    }
-  ];
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
-    setDreams(sampleDreams);
     setIsVisible(true);
     setMounted(true);
   }, []);
@@ -156,7 +94,7 @@ export default function FutureDreams() {
       )}
 
       {/* Header */}
-      <div className="relative z-10 pt-8 pb-4 text-center">
+      <div className="relative z-10 pt-4 pb-4 text-center">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Future Dreams ✨
         </h1>
@@ -186,8 +124,9 @@ export default function FutureDreams() {
       {/* Dreams Grid */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 pb-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDreams.map((dream, index) => (
+          {dreams.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDreams.map((dream, index) => (
               <div
                 key={dream.id}
                 className={`transform transition-all duration-500 hover:scale-105 ${
@@ -255,8 +194,21 @@ export default function FutureDreams() {
               </div>
             ))}
           </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">✨</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">No Dreams Yet</h3>
+              <p className="text-gray-600 mb-8">Start planning your future together!</p>
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Add First Dream ✨
+              </button>
+            </div>
+          )}
 
-          {filteredDreams.length === 0 && (
+          {dreams.length > 0 && filteredDreams.length === 0 && (
             <div className="text-center py-16">
               <div className="text-6xl mb-4">✨</div>
               <p className="text-gray-500 text-lg">No dreams in this category yet</p>
@@ -264,11 +216,16 @@ export default function FutureDreams() {
           )}
 
           {/* Add New Dream Button */}
-          <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Add New Dream ✨
-            </button>
-          </div>
+          {dreams.length > 0 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Add New Dream ✨
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -278,6 +235,13 @@ export default function FutureDreams() {
           💝 Every dream is a promise of our future together
         </p>
       </div>
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        type="dream"
+      />
     </div>
   );
 }

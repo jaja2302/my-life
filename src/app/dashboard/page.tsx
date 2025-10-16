@@ -3,13 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useData } from '@/context/DataContext';
 
 export default function Dashboard() {
+  const { timelineEvents, photos, loveNotes, promises, anniversaries, dreams } = useData();
   const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setIsVisible(true);
+    setMounted(true);
   }, []);
 
   const menuItems = [
@@ -58,27 +62,29 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 lg:ml-80">
       {/* Floating Hearts Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(25)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-200 opacity-20 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${4 + Math.random() * 3}s`
-            }}
-          >
-            💕
-          </div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(25)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-pink-200 opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${4 + Math.random() * 3}s`
+              }}
+            >
+              💕
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Header */}
-      <div className="relative z-10 pt-8 pb-4 text-center">
+      <div className="relative z-10 pt-4 pb-4 text-center">
         <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Welcome Home 💕
         </h1>
@@ -92,18 +98,18 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg">
               <div className="text-3xl mb-2">💕</div>
-              <div className="text-2xl font-bold text-pink-600 mb-1">1,247</div>
-              <div className="text-gray-600">Days in Love</div>
+              <div className="text-2xl font-bold text-pink-600 mb-1">{timelineEvents.length}</div>
+              <div className="text-gray-600">Timeline Events</div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg">
               <div className="text-3xl mb-2">📸</div>
-              <div className="text-2xl font-bold text-purple-600 mb-1">324</div>
-              <div className="text-gray-600">Memories Captured</div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">{photos.length}</div>
+              <div className="text-gray-600">Photos Uploaded</div>
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-lg">
-              <div className="text-3xl mb-2">🎉</div>
-              <div className="text-2xl font-bold text-rose-600 mb-1">12</div>
-              <div className="text-gray-600">Special Celebrations</div>
+              <div className="text-3xl mb-2">💌</div>
+              <div className="text-2xl font-bold text-rose-600 mb-1">{loveNotes.length}</div>
+              <div className="text-gray-600">Love Notes</div>
             </div>
           </div>
 

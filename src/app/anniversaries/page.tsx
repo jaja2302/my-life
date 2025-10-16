@@ -1,79 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-interface Anniversary {
-  id: number;
-  title: string;
-  date: string;
-  years: number;
-  description: string;
-  memories: string[];
-  isUpcoming: boolean;
-  daysUntil: number;
-}
+import { useData } from '@/context/DataContext';
+import UploadModal from '@/components/UploadModal';
 
 export default function Anniversaries() {
-  const [anniversaries, setAnniversaries] = useState<Anniversary[]>([]);
+  const { anniversaries } = useData();
   const [isVisible, setIsVisible] = useState(false);
-
-  // Sample anniversaries
-  const sampleAnniversaries: Anniversary[] = [
-    {
-      id: 1,
-      title: "First Meeting Anniversary",
-      date: "January 15",
-      years: 4,
-      description: "The day our eyes first met and our hearts skipped a beat. The beginning of our beautiful love story.",
-      memories: ["Nervous first conversation", "That awkward but cute moment", "The spark we both felt"],
-      isUpcoming: false,
-      daysUntil: 0
-    },
-    {
-      id: 2,
-      title: "First Date Anniversary",
-      date: "February 14",
-      years: 4,
-      description: "Our first official date at that cozy café. The conversation flowed like magic, and we knew this was special.",
-      memories: ["The perfect café", "Endless conversation", "The first 'I like you'"],
-      isUpcoming: true,
-      daysUntil: 45
-    },
-    {
-      id: 3,
-      title: "First 'I Love You' Anniversary",
-      date: "June 20",
-      years: 3,
-      description: "Under the stars, you said those three magical words that changed everything. My heart has been yours ever since.",
-      memories: ["Starry night", "Nervous confession", "The sweetest moment"],
-      isUpcoming: false,
-      daysUntil: 0
-    },
-    {
-      id: 4,
-      title: "Moving In Together",
-      date: "March 15",
-      years: 3,
-      description: "The day we became roommates for life. Our little home filled with love, laughter, and endless cuddles.",
-      memories: ["Packing boxes together", "First night in our home", "Making it ours"],
-      isUpcoming: false,
-      daysUntil: 0
-    },
-    {
-      id: 5,
-      title: "Our Wedding Anniversary",
-      date: "August 10",
-      years: 2,
-      description: "The day we promised forever to each other in front of our loved ones. The most beautiful day of our lives.",
-      memories: ["Walking down the aisle", "Saying 'I do'", "Our first dance"],
-      isUpcoming: false,
-      daysUntil: 0
-    }
-  ];
+  const [mounted, setMounted] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
-    setAnniversaries(sampleAnniversaries);
     setIsVisible(true);
+    setMounted(true);
   }, []);
 
   const getAnniversaryIcon = (years: number) => {
@@ -113,7 +52,7 @@ export default function Anniversaries() {
       </div>
 
       {/* Header */}
-      <div className="relative z-10 pt-8 pb-4 text-center">
+      <div className="relative z-10 pt-4 pb-4 text-center">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Our Anniversaries 🎉
         </h1>
@@ -211,6 +150,13 @@ export default function Anniversaries() {
           💝 Every anniversary is a milestone in our love story
         </p>
       </div>
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        type="anniversary"
+      />
     </div>
   );
 }

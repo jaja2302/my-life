@@ -2,96 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-
-interface Photo {
-  id: number;
-  src: string;
-  alt: string;
-  date: string;
-  caption: string;
-  category: 'date' | 'travel' | 'home' | 'special';
-}
+import { useData } from '@/context/DataContext';
+import UploadModal from '@/components/UploadModal';
 
 export default function Gallery() {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const { photos } = useData();
+  const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [filter, setFilter] = useState<string>('all');
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Sample photo data - replace with your real photos
-  const samplePhotos: Photo[] = [
-    {
-      id: 1,
-      src: "/api/placeholder/400/300",
-      alt: "First date at the café",
-      date: "Feb 14, 2020",
-      caption: "Our first date - nervous but excited!",
-      category: 'date'
-    },
-    {
-      id: 2,
-      src: "/api/placeholder/400/300",
-      alt: "Beach sunset",
-      date: "Aug 10, 2021",
-      caption: "Watching the sunset together in Bali",
-      category: 'travel'
-    },
-    {
-      id: 3,
-      src: "/api/placeholder/400/300",
-      alt: "Cooking together",
-      date: "Mar 15, 2021",
-      caption: "Our first meal in our new home",
-      category: 'home'
-    },
-    {
-      id: 4,
-      src: "/api/placeholder/400/300",
-      alt: "Anniversary dinner",
-      date: "Feb 14, 2022",
-      caption: "Two years of love and counting",
-      category: 'special'
-    },
-    {
-      id: 5,
-      src: "/api/placeholder/400/300",
-      alt: "Movie night",
-      date: "Dec 25, 2020",
-      caption: "Christmas movie marathon",
-      category: 'home'
-    },
-    {
-      id: 6,
-      src: "/api/placeholder/400/300",
-      alt: "Mountain hike",
-      date: "Jun 20, 2021",
-      caption: "Conquering mountains together",
-      category: 'travel'
-    },
-    {
-      id: 7,
-      src: "/api/placeholder/400/300",
-      alt: "Birthday surprise",
-      date: "Jul 15, 2021",
-      caption: "The best birthday surprise ever!",
-      category: 'special'
-    },
-    {
-      id: 8,
-      src: "/api/placeholder/400/300",
-      alt: "Coffee date",
-      date: "Jan 15, 2020",
-      caption: "Where it all began",
-      category: 'date'
-    }
-  ];
+  const [mounted, setMounted] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setPhotos(samplePhotos);
-      setIsLoading(false);
-    }, 1000);
+    setMounted(true);
   }, []);
 
   const filteredPhotos = filter === 'all' 
@@ -106,39 +28,30 @@ export default function Gallery() {
     { key: 'special', label: 'Special', icon: '🎉' }
   ];
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-pink-500 mx-auto mb-4"></div>
-          <p className="text-pink-600 text-lg">Loading our beautiful memories...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 lg:ml-80">
       {/* Floating Hearts Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-200 opacity-20 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
-            }}
-          >
-            💕
-          </div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-pink-200 opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`
+              }}
+            >
+              💕
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Header */}
-      <div className="relative z-10 pt-8 pb-4 text-center">
+      <div className="relative z-10 pt-4 pb-4 text-center">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Our Photo Gallery 📸
         </h1>
@@ -167,39 +80,65 @@ export default function Gallery() {
 
       {/* Photo Grid */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredPhotos.map((photo, index) => (
-            <div
-              key={photo.id}
-              className="group cursor-pointer transform transition-all duration-500 hover:scale-105"
-              onClick={() => setSelectedPhoto(photo)}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  {/* Photo Info Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="font-semibold text-sm">{photo.caption}</p>
-                    <p className="text-xs opacity-90">{photo.date}</p>
+        {photos.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredPhotos.map((photo, index) => (
+              <div
+                key={photo.id}
+                className="group cursor-pointer transform transition-all duration-500 hover:scale-105"
+                onClick={() => setSelectedPhoto(photo)}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+                  <div className="relative h-64 overflow-hidden">
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Photo Info Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="font-semibold text-sm">{photo.caption}</p>
+                      <p className="text-xs opacity-90">{photo.date}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">📷</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">No Photos Yet</h3>
+            <p className="text-gray-600 mb-8">Start building your photo gallery by uploading your first memory!</p>
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Upload First Photo 📸
+            </button>
+          </div>
+        )}
 
-        {filteredPhotos.length === 0 && (
+        {photos.length > 0 && filteredPhotos.length === 0 && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">📷</div>
             <p className="text-gray-500 text-lg">No photos in this category yet</p>
+          </div>
+        )}
+
+        {/* Add More Button */}
+        {photos.length > 0 && (
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            >
+              Upload More Photos 📸
+            </button>
           </div>
         )}
       </div>
@@ -244,6 +183,13 @@ export default function Gallery() {
           💝 Every photo is a moment of our love story
         </p>
       </div>
+
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        type="photo"
+      />
     </div>
   );
 }
