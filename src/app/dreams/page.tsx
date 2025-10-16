@@ -17,6 +17,7 @@ export default function FutureDreams() {
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [filter, setFilter] = useState<string>('all');
+  const [mounted, setMounted] = useState(false);
 
   // Sample dreams
   const sampleDreams: Dream[] = [
@@ -85,6 +86,7 @@ export default function FutureDreams() {
   useEffect(() => {
     setDreams(sampleDreams);
     setIsVisible(true);
+    setMounted(true);
   }, []);
 
   const filteredDreams = filter === 'all' 
@@ -134,22 +136,24 @@ export default function FutureDreams() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
       {/* Floating Hearts Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(22)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-200 opacity-20 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
-            }}
-          >
-            ✨
-          </div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(22)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-pink-200 opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`
+              }}
+            >
+              ✨
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Header */}
       <div className="relative z-10 pt-8 pb-4 text-center">

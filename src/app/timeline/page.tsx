@@ -2,90 +2,31 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-
-interface TimelineEvent {
-  id: number;
-  date: string;
-  title: string;
-  description: string;
-  image: string;
-  type: 'milestone' | 'memory' | 'anniversary';
-}
+import { useData } from '@/context/DataContext';
+import UploadModal from '@/components/UploadModal';
 
 export default function Timeline() {
+  const { timelineEvents } = useData();
   const [currentEvent, setCurrentEvent] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-
-  // Sample timeline data - replace with your real memories
-  const timelineEvents: TimelineEvent[] = [
-    {
-      id: 1,
-      date: "January 15, 2020",
-      title: "First Meeting 💕",
-      description: "The day our eyes met and hearts skipped a beat. Little did we know this was the beginning of forever.",
-      image: "/api/placeholder/400/300",
-      type: 'milestone'
-    },
-    {
-      id: 2,
-      date: "February 14, 2020",
-      title: "First Date 🌹",
-      description: "Our first official date at that cozy café. The conversation flowed like magic, and we knew this was special.",
-      image: "/api/placeholder/400/300",
-      type: 'memory'
-    },
-    {
-      id: 3,
-      date: "June 20, 2020",
-      title: "First 'I Love You' 💖",
-      description: "Under the stars, you said those three magical words that changed everything. My heart has been yours ever since.",
-      image: "/api/placeholder/400/300",
-      type: 'milestone'
-    },
-    {
-      id: 4,
-      date: "December 25, 2020",
-      title: "First Christmas Together 🎄",
-      description: "Waking up next to you on Christmas morning was the best gift I could ever ask for.",
-      image: "/api/placeholder/400/300",
-      type: 'memory'
-    },
-    {
-      id: 5,
-      date: "March 15, 2021",
-      title: "Moving In Together 🏠",
-      description: "The day we became roommates for life. Our little home filled with love, laughter, and endless cuddles.",
-      image: "/api/placeholder/400/300",
-      type: 'milestone'
-    },
-    {
-      id: 6,
-      date: "August 10, 2021",
-      title: "Our First Trip ✈️",
-      description: "Exploring the world together, hand in hand. Every destination became more beautiful because you were there.",
-      image: "/api/placeholder/400/300",
-      type: 'memory'
-    },
-    {
-      id: 7,
-      date: "February 14, 2022",
-      title: "Two Years of Love 💝",
-      description: "Two years of growing together, learning about each other, and falling deeper in love every single day.",
-      image: "/api/placeholder/400/300",
-      type: 'anniversary'
-    }
-  ];
+  const [mounted, setMounted] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+    setMounted(true);
   }, []);
 
   const nextEvent = () => {
-    setCurrentEvent((prev) => (prev + 1) % timelineEvents.length);
+    if (timelineEvents.length > 0) {
+      setCurrentEvent((prev) => (prev + 1) % timelineEvents.length);
+    }
   };
 
   const prevEvent = () => {
-    setCurrentEvent((prev) => (prev - 1 + timelineEvents.length) % timelineEvents.length);
+    if (timelineEvents.length > 0) {
+      setCurrentEvent((prev) => (prev - 1 + timelineEvents.length) % timelineEvents.length);
+    }
   };
 
   const getEventIcon = (type: string) => {
@@ -109,22 +50,24 @@ export default function Timeline() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
       {/* Floating Hearts Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-200 opacity-30 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${4 + Math.random() * 3}s`
-            }}
-          >
-            💕
-          </div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-pink-200 opacity-30 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${4 + Math.random() * 3}s`
+              }}
+            >
+              💕
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Header */}
       <div className="relative z-10 pt-8 pb-4 text-center">
