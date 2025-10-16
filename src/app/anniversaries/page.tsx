@@ -32,24 +32,27 @@ export default function Anniversaries() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 border-4 border-black">
+
       {/* Floating Hearts Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute text-pink-200 opacity-20 animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`
-            }}
-          >
-            💕
-          </div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-pink-200 opacity-20 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`
+              }}
+            >
+              💕
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Header */}
       <div className="relative z-10 pt-4 pb-4 text-center">
@@ -77,8 +80,9 @@ export default function Anniversaries() {
       {/* Anniversaries Grid */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 pb-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {anniversaries.map((anniversary, index) => (
+          {anniversaries.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {anniversaries.map((anniversary, index) => (
               <div
                 key={anniversary.id}
                 className={`transform transition-all duration-500 hover:scale-105 ${
@@ -133,14 +137,32 @@ export default function Anniversaries() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">🎉</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">No Anniversaries Yet</h3>
+              <p className="text-gray-600 mb-8">Start celebrating your special moments together!</p>
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Add First Anniversary 💕
+              </button>
+            </div>
+          )}
 
           {/* Add New Anniversary Button */}
-          <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Add New Anniversary 💕
-            </button>
-          </div>
+          {anniversaries.length > 0 && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Add New Anniversary 💕
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

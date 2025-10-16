@@ -48,7 +48,7 @@ export default function Timeline() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 lg:ml-80">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

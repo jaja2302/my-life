@@ -29,7 +29,7 @@ export default function Gallery() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 lg:ml-80">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -51,7 +51,7 @@ export default function Gallery() {
       )}
 
       {/* Header */}
-      <div className="relative z-10 pt-4 pb-4 text-center">
+      <div className="relative z-10 pt-8 pb-4 text-center">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Our Photo Gallery 📸
         </h1>
@@ -59,7 +59,7 @@ export default function Gallery() {
       </div>
 
       {/* Filter Buttons */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 mb-8">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 mb-4">
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map((category) => (
             <button
