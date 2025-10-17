@@ -91,48 +91,6 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Desktop Navigation */}
-      <div className="hidden lg:block fixed top-0 left-0 w-80 h-full bg-white/95 backdrop-blur-lg shadow-xl z-40">
-        <div className="p-6 h-full flex flex-col">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-              Our Love Story 💕
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">Made with love</p>
-          </div>
-
-          {/* Navigation Items */}
-          <nav className="flex-1">
-            <ul className="space-y-2">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                      pathname === item.href
-                        ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg'
-                        : 'text-gray-600 hover:bg-pink-50 hover:text-pink-600'
-                    }`}
-                  >
-                    <span className="text-xl">{item.icon}</span>
-                    <span className="font-medium">{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Footer */}
-          <div className="mt-auto pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <p className="text-gray-500 text-sm">
-                💝 Every moment is precious
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

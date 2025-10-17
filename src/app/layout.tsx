@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
 import { DataProvider } from "@/context/DataContext";
 
 const geistSans = Geist({
@@ -30,8 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <DataProvider>
-          <Navigation />
-          <div className="lg:ml-80">
+          <div className="min-h-screen">
             {children}
           </div>
         </DataProvider>
