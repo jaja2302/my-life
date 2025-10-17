@@ -20,7 +20,7 @@ export default function HeartLockCinematic() {
   const [showPortal, setShowPortal] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const correctHint = 'lovecode'; // change to your secret
+  const correctHint = '23'; // change to your secret
 
   // Smooth loading animation
   useEffect(() => {
