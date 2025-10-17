@@ -6,16 +6,31 @@ import { useRouter } from 'next/navigation';
 import { useData } from '@/context/DataContext';
 import DataManager from '@/components/DataManager';
 import StorageManager from '@/components/StorageManager';
+import PasswordManager from '@/components/PasswordManager';
+import { loadConfig } from '@/utils/config';
 
 export default function Dashboard() {
   const { timelineEvents, photos, loveNotes, promises, anniversaries, dreams } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('23');
   const router = useRouter();
 
   useEffect(() => {
     setIsVisible(true);
     setMounted(true);
+    
+    // Load current password
+    const loadCurrentPassword = async () => {
+      try {
+        const config = await loadConfig();
+        setCurrentPassword(config.password);
+      } catch (error) {
+        console.log('Using default password');
+      }
+    };
+    
+    loadCurrentPassword();
   }, []);
 
   const menuItems = [
@@ -96,6 +111,10 @@ export default function Dashboard() {
             <p className="text-gray-600 text-xl">Our little corner of the internet, filled with love</p>
           </div>
           <div className="flex gap-2">
+            <PasswordManager 
+              currentPassword={currentPassword} 
+              onPasswordUpdate={setCurrentPassword}
+            />
             <DataManager />
             <StorageManager />
           </div>

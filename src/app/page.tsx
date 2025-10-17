@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Stars, Environment, Html } from '@react-three/drei';
 import { useRouter } from 'next/navigation';
 import * as THREE from 'three';
+import { loadConfig, AppConfig } from '@/utils/config';
 
 /**
  * Cinematic Romantic Heart Lock Page
@@ -20,7 +21,23 @@ export default function HeartLockCinematic() {
   const [showPortal, setShowPortal] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const correctHint = '23'; // change to your secret
+  const [correctHint, setCorrectHint] = useState('23'); // default fallback
+  const [config, setConfig] = useState<AppConfig | null>(null);
+
+  // Load configuration from JSON
+  useEffect(() => {
+    const loadAppConfig = async () => {
+      try {
+        const appConfig = await loadConfig();
+        setConfig(appConfig);
+        setCorrectHint(appConfig.password);
+      } catch (error) {
+        console.log('Using default password configuration');
+      }
+    };
+    
+    loadAppConfig();
+  }, []);
 
   // Smooth loading animation
   useEffect(() => {

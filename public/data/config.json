@@ -1,0 +1,7 @@
+{
+    "password": "23",
+    "settings": {
+        "maxAttempts": 3,
+        "lockoutTime": 30000
+    }
+}
