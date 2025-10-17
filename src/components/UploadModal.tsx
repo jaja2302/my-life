@@ -13,7 +13,7 @@ interface UploadModalProps {
 export default function UploadModal({ isOpen, onClose, type, onSuccess }: UploadModalProps) {
   const { addTimelineEvent, addPhoto, addLoveNote, addPromise, addAnniversary, addDream, uploadPhoto } = useData();
   const [isUploading, setIsUploading] = useState(false);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,7 +26,7 @@ export default function UploadModal({ isOpen, onClose, type, onSuccess }: Upload
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: Record<string, any>) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

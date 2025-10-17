@@ -28,6 +28,112 @@ export default function HeartLockCinematic() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Add CSS animations safely on client-side
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) scale(1);
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-20px);
+        }
+        60% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes shake {
+        0%, 100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      /* Enhanced input focus effects */
+      input:focus {
+        border-color: #ff6fa3 !important;
+        box-shadow: 0 0 0 3px rgba(255, 111, 163, 0.2) !important;
+        transform: translateY(-2px);
+      }
+
+      /* Button hover effects */
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 111, 163, 0.4) !important;
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      // Cleanup on unmount
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
   const onHeartTap = () => {
     if (unlocked) return;
     setTapCount((c) => {
@@ -613,99 +719,4 @@ const cinematicMessage: React.CSSProperties = {
   border: '1px solid rgba(255,255,255,0.3)',
 };
 
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: translateX(-50%) scale(0.8);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
-    }
-  }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-20px);
-    }
-    60% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes shake {
-    0%, 100% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-5px);
-    }
-    75% {
-      transform: translateX(5px);
-    }
-  }
-
-  /* Enhanced input focus effects */
-  input:focus {
-    border-color: #ff6fa3 !important;
-    box-shadow: 0 0 0 3px rgba(255, 111, 163, 0.2) !important;
-    transform: translateY(-2px);
-  }
-
-  /* Button hover effects */
-  button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 111, 163, 0.4) !important;
-  }
-
-  button:active {
-    transform: translateY(0);
-  }
-`;
-document.head.appendChild(style);
+// CSS animations will be handled by useEffect to avoid SSR issues
