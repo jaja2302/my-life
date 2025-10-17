@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function OurPromises() {
-  const { promises } = useData();
+  const { promises, deletePromise } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<string>('all');
@@ -57,6 +59,8 @@ export default function OurPromises() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+      {/* Back Button */}
+      <BackButton />
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -140,6 +144,14 @@ export default function OurPromises() {
                   
                   <div className="text-sm text-gray-500">
                     {promise.date}
+                  </div>
+
+                  {/* Delete Button */}
+                  <div className="flex justify-end mt-4">
+                    <DeleteButton
+                      onDelete={() => deletePromise(promise.id)}
+                      itemTitle={promise.title}
+                    />
                   </div>
                 </div>
               </div>

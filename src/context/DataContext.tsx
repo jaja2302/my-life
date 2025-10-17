@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { fetchData, saveData, uploadPhotoToPublic, deleteData } from '@/utils/api';
 
 // Types
 export interface TimelineEvent {
@@ -33,7 +34,7 @@ export interface LoveNote {
   createdAt: string;
 }
 
-export interface Promise {
+export interface LovePromise {
   id: string;
   title: string;
   description: string;
@@ -72,7 +73,7 @@ interface DataContextType {
   timelineEvents: TimelineEvent[];
   photos: Photo[];
   loveNotes: LoveNote[];
-  promises: Promise[];
+  promises: LovePromise[];
   anniversaries: Anniversary[];
   dreams: Dream[];
   
@@ -92,8 +93,8 @@ interface DataContextType {
   deleteLoveNote: (id: string) => void;
   
   // Promise Actions
-  addPromise: (promise: Omit<Promise, 'id' | 'createdAt'>) => void;
-  updatePromise: (id: string, promise: Partial<Promise>) => void;
+  addPromise: (promise: Omit<LovePromise, 'id' | 'createdAt'>) => void;
+  updatePromise: (id: string, promise: Partial<LovePromise>) => void;
   deletePromise: (id: string) => void;
   
   // Anniversary Actions
@@ -116,27 +117,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loveNotes, setLoveNotes] = useState<LoveNote[]>([]);
-  const [promises, setPromises] = useState<Promise[]>([]);
+  const [promises, setPromises] = useState<LovePromise[]>([]);
   const [anniversaries, setAnniversaries] = useState<Anniversary[]>([]);
   const [dreams, setDreams] = useState<Dream[]>([]);
 
-  // Load data from localStorage on mount
+  // Load data from JSON files on mount
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       try {
-        const timelineData = localStorage.getItem('timelineEvents');
-        const photosData = localStorage.getItem('photos');
-        const notesData = localStorage.getItem('loveNotes');
-        const promisesData = localStorage.getItem('promises');
-        const anniversariesData = localStorage.getItem('anniversaries');
-        const dreamsData = localStorage.getItem('dreams');
+        // Fetch all data from JSON files
+        const [timelineResult, photosResult, notesResult, promisesResult, anniversariesResult, dreamsResult] = await Promise.all([
+          fetchData<TimelineEvent>('timeline-events.json'),
+          fetchData<Photo>('photos.json'),
+          fetchData<LoveNote>('love-notes.json'),
+          fetchData<LovePromise>('promises.json'),
+          fetchData<Anniversary>('anniversaries.json'),
+          fetchData<Dream>('dreams.json')
+        ]);
 
-        if (timelineData) setTimelineEvents(JSON.parse(timelineData));
-        if (photosData) setPhotos(JSON.parse(photosData));
-        if (notesData) setLoveNotes(JSON.parse(notesData));
-        if (promisesData) setPromises(JSON.parse(promisesData));
-        if (anniversariesData) setAnniversaries(JSON.parse(anniversariesData));
-        if (dreamsData) setDreams(JSON.parse(dreamsData));
+        if (timelineResult.success && timelineResult.data) setTimelineEvents(timelineResult.data);
+        if (photosResult.success && photosResult.data) setPhotos(photosResult.data);
+        if (notesResult.success && notesResult.data) setLoveNotes(notesResult.data);
+        if (promisesResult.success && promisesResult.data) setPromises(promisesResult.data);
+        if (anniversariesResult.success && anniversariesResult.data) setAnniversaries(anniversariesResult.data);
+        if (dreamsResult.success && dreamsResult.data) setDreams(dreamsResult.data);
       } catch (error) {
         console.error('Error loading data:', error);
       }
@@ -145,29 +149,51 @@ export function DataProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  // Save data to localStorage whenever data changes
+  // Save data to JSON files whenever data changes
+  const saveToJsonFile = async (filename: string, data: any[]) => {
+    try {
+      // Clean old data before saving
+      const cleanedData = cleanOldData(data);
+      await saveData(filename, cleanedData);
+    } catch (error) {
+      console.error(`Error saving ${filename}:`, error);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem('timelineEvents', JSON.stringify(timelineEvents));
+    if (timelineEvents.length > 0) {
+      saveToJsonFile('timeline-events.json', timelineEvents);
+    }
   }, [timelineEvents]);
 
   useEffect(() => {
-    localStorage.setItem('photos', JSON.stringify(photos));
+    if (photos.length > 0) {
+      saveToJsonFile('photos.json', photos);
+    }
   }, [photos]);
 
   useEffect(() => {
-    localStorage.setItem('loveNotes', JSON.stringify(loveNotes));
+    if (loveNotes.length > 0) {
+      saveToJsonFile('love-notes.json', loveNotes);
+    }
   }, [loveNotes]);
 
   useEffect(() => {
-    localStorage.setItem('promises', JSON.stringify(promises));
+    if (promises.length > 0) {
+      saveToJsonFile('promises.json', promises);
+    }
   }, [promises]);
 
   useEffect(() => {
-    localStorage.setItem('anniversaries', JSON.stringify(anniversaries));
+    if (anniversaries.length > 0) {
+      saveToJsonFile('anniversaries.json', anniversaries);
+    }
   }, [anniversaries]);
 
   useEffect(() => {
-    localStorage.setItem('dreams', JSON.stringify(dreams));
+    if (dreams.length > 0) {
+      saveToJsonFile('dreams.json', dreams);
+    }
   }, [dreams]);
 
   // Timeline Actions
@@ -184,8 +210,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setTimelineEvents(prev => prev.map(e => e.id === id ? { ...e, ...event } : e));
   };
 
-  const deleteTimelineEvent = (id: string) => {
-    setTimelineEvents(prev => prev.filter(e => e.id !== id));
+  const deleteTimelineEvent = async (id: string) => {
+    try {
+      const result = await deleteData('timeline-events.json', id);
+      if (result.success) {
+        setTimelineEvents(prev => prev.filter(e => e.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting timeline event:', error);
+    }
   };
 
   // Photo Actions
@@ -202,8 +235,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setPhotos(prev => prev.map(p => p.id === id ? { ...p, ...photo } : p));
   };
 
-  const deletePhoto = (id: string) => {
-    setPhotos(prev => prev.filter(p => p.id !== id));
+  const deletePhoto = async (id: string) => {
+    try {
+      const result = await deleteData('photos.json', id);
+      if (result.success) {
+        setPhotos(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+    }
   };
 
   // Love Note Actions
@@ -220,13 +260,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoveNotes(prev => prev.map(n => n.id === id ? { ...n, ...note } : n));
   };
 
-  const deleteLoveNote = (id: string) => {
-    setLoveNotes(prev => prev.filter(n => n.id !== id));
+  const deleteLoveNote = async (id: string) => {
+    try {
+      const result = await deleteData('love-notes.json', id);
+      if (result.success) {
+        setLoveNotes(prev => prev.filter(n => n.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting love note:', error);
+    }
   };
 
   // Promise Actions
-  const addPromise = (promise: Omit<Promise, 'id' | 'createdAt'>) => {
-    const newPromise: Promise = {
+  const addPromise = (promise: Omit<LovePromise, 'id' | 'createdAt'>) => {
+    const newPromise: LovePromise = {
       ...promise,
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
@@ -234,12 +281,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setPromises(prev => [...prev, newPromise]);
   };
 
-  const updatePromise = (id: string, promise: Partial<Promise>) => {
+  const updatePromise = (id: string, promise: Partial<LovePromise>) => {
     setPromises(prev => prev.map(p => p.id === id ? { ...p, ...promise } : p));
   };
 
-  const deletePromise = (id: string) => {
-    setPromises(prev => prev.filter(p => p.id !== id));
+  const deletePromise = async (id: string) => {
+    try {
+      const result = await deleteData('promises.json', id);
+      if (result.success) {
+        setPromises(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting promise:', error);
+    }
   };
 
   // Anniversary Actions
@@ -256,8 +310,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setAnniversaries(prev => prev.map(a => a.id === id ? { ...a, ...anniversary } : a));
   };
 
-  const deleteAnniversary = (id: string) => {
-    setAnniversaries(prev => prev.filter(a => a.id !== id));
+  const deleteAnniversary = async (id: string) => {
+    try {
+      const result = await deleteData('anniversaries.json', id);
+      if (result.success) {
+        setAnniversaries(prev => prev.filter(a => a.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting anniversary:', error);
+    }
   };
 
   // Dream Actions
@@ -274,21 +335,35 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setDreams(prev => prev.map(d => d.id === id ? { ...d, ...dream } : d));
   };
 
-  const deleteDream = (id: string) => {
-    setDreams(prev => prev.filter(d => d.id !== id));
+  const deleteDream = async (id: string) => {
+    try {
+      const result = await deleteData('dreams.json', id);
+      if (result.success) {
+        setDreams(prev => prev.filter(d => d.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting dream:', error);
+    }
   };
 
-  // Upload Photo
+  // Clean old data to prevent quota exceeded
+  const cleanOldData = (data: any[], maxItems: number = 50) => {
+    if (data.length > maxItems) {
+      // Keep only the most recent items
+      return data
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, maxItems);
+    }
+    return data;
+  };
+
+  // Upload Photo to public folder
   const uploadPhoto = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        resolve(result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+    const result = await uploadPhotoToPublic(file);
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.error || 'Failed to upload photo');
   };
 
   const value: DataContextType = {

@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function Anniversaries() {
-  const { anniversaries } = useData();
+  const { anniversaries, deleteAnniversary } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -33,6 +35,8 @@ export default function Anniversaries() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 border-4 border-black">
+      {/* Back Button */}
+      <BackButton />
 
       {/* Floating Hearts Background */}
       {mounted && (
@@ -134,6 +138,14 @@ export default function Anniversaries() {
                       </div>
                     </div>
                   )}
+
+                  {/* Delete Button */}
+                  <div className="flex justify-end mt-4">
+                    <DeleteButton
+                      onDelete={() => deleteAnniversary(anniversary.id)}
+                      itemTitle={anniversary.title}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

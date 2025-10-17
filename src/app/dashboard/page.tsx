@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useData } from '@/context/DataContext';
+import DataManager from '@/components/DataManager';
+import StorageManager from '@/components/StorageManager';
 
 export default function Dashboard() {
   const { timelineEvents, photos, loveNotes, promises, anniversaries, dreams } = useData();
@@ -85,10 +87,19 @@ export default function Dashboard() {
 
       {/* Header */}
       <div className="relative z-10 pt-4 pb-4 text-center">
-        <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-          Welcome Home 💕
-        </h1>
-        <p className="text-gray-600 text-xl">Our little corner of the internet, filled with love</p>
+        <div className="flex justify-between items-center mb-4">
+          <div></div>
+          <div className="flex-1">
+            <h1 className="text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              Welcome Home 💕
+            </h1>
+            <p className="text-gray-600 text-xl">Our little corner of the internet, filled with love</p>
+          </div>
+          <div className="flex gap-2">
+            <DataManager />
+            <StorageManager />
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}

@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function LoveNotes() {
-  const { loveNotes } = useData();
+  const { loveNotes, deleteLoveNote } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -17,6 +19,8 @@ export default function LoveNotes() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+      {/* Back Button */}
+      <BackButton />
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -72,6 +76,14 @@ export default function LoveNotes() {
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <span>{note.date}</span>
                       <span className="font-semibold">{note.from}</span>
+                    </div>
+
+                    {/* Delete Button */}
+                    <div className="flex justify-end mt-4">
+                      <DeleteButton
+                        onDelete={() => deleteLoveNote(note.id)}
+                        itemTitle={note.title}
+                      />
                     </div>
                   </div>
                 </div>

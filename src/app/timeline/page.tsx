@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function Timeline() {
-  const { timelineEvents } = useData();
+  const { timelineEvents, deleteTimelineEvent } = useData();
   const [currentEvent, setCurrentEvent] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -49,6 +51,8 @@ export default function Timeline() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+      {/* Back Button */}
+      <BackButton />
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -116,6 +120,19 @@ export default function Timeline() {
                     <p className="text-gray-600 text-lg leading-relaxed text-center">
                       {timelineEvents[currentEvent].description}
                     </p>
+
+                    {/* Delete Button */}
+                    <div className="flex justify-center mt-6">
+                      <DeleteButton
+                        onDelete={() => {
+                          deleteTimelineEvent(timelineEvents[currentEvent].id);
+                          if (timelineEvents.length > 1) {
+                            setCurrentEvent(0);
+                          }
+                        }}
+                        itemTitle={timelineEvents[currentEvent].title}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

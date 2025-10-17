@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function Gallery() {
-  const { photos } = useData();
+  const { photos, deletePhoto } = useData();
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [filter, setFilter] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
@@ -30,6 +32,8 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+      {/* Back Button */}
+      <BackButton />
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -103,6 +107,15 @@ export default function Gallery() {
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <p className="font-semibold text-sm">{photo.caption}</p>
                       <p className="text-xs opacity-90">{photo.date}</p>
+                    </div>
+
+                    {/* Delete Button */}
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <DeleteButton
+                        onDelete={() => deletePhoto(photo.id)}
+                        itemTitle={photo.caption}
+                        className="bg-red-500/80 hover:bg-red-600/80 text-white"
+                      />
                     </div>
                   </div>
                 </div>

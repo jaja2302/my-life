@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useData } from '@/context/DataContext';
 import UploadModal from '@/components/UploadModal';
+import BackButton from '@/components/BackButton';
+import DeleteButton from '@/components/DeleteButton';
 
 interface Dream {
   id: number;
@@ -16,7 +18,7 @@ interface Dream {
 }
 
 export default function FutureDreams() {
-  const { dreams } = useData();
+  const { dreams, deleteDream } = useData();
   const [isVisible, setIsVisible] = useState(false);
   const [filter, setFilter] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
@@ -73,6 +75,8 @@ export default function FutureDreams() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50">
+      {/* Back Button */}
+      <BackButton />
       {/* Floating Hearts Background */}
       {mounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -189,6 +193,14 @@ export default function FutureDreams() {
                         </li>
                       )}
                     </ul>
+                  </div>
+
+                  {/* Delete Button */}
+                  <div className="flex justify-end mt-4">
+                    <DeleteButton
+                      onDelete={() => deleteDream(dream.id)}
+                      itemTitle={dream.title}
+                    />
                   </div>
                 </div>
               </div>
