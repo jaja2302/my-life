@@ -70,62 +70,7 @@ export default function StorageManager({ className = '' }: StorageManagerProps) 
 
   return (
     <div className={`relative ${className}`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
-      >
-        🗂️ Storage ({storageInfo.formatted})
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-12 right-0 bg-white rounded-lg shadow-xl border p-4 min-w-80 z-50">
-          <div className="space-y-3">
-            <h3 className="font-semibold text-gray-800 mb-3">Storage Management</h3>
-            
-            {/* Storage Summary */}
-            <div className="bg-gray-50 rounded-lg p-3">
-              <div className="text-sm font-semibold text-gray-700 mb-2">
-                Total Storage: {storageInfo.formatted}
-              </div>
-              <div className="space-y-1">
-                {storageInfo.breakdown.map((item) => (
-                  <div key={item.key} className="flex justify-between text-xs text-gray-600">
-                    <span className="capitalize">{item.key.replace(/([A-Z])/g, ' $1').trim()}:</span>
-                    <span>{item.formatted} ({item.count} items)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Clear Individual Data */}
-            <div className="space-y-2">
-              <h4 className="text-sm font-semibold text-gray-700">Clear Individual Data:</h4>
-              {storageInfo.breakdown.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => clearSpecificData(item.key)}
-                  className="w-full bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded text-xs transition-colors"
-                >
-                  Clear {item.key.replace(/([A-Z])/g, ' $1').trim()} ({item.formatted})
-                </button>
-              ))}
-            </div>
-            
-            {/* Clear All Data */}
-            <button
-              onClick={clearOldData}
-              className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
-            >
-              🗑️ Clear All Data
-            </button>
-            
-            {/* Warning */}
-            <div className="text-xs text-gray-500 bg-yellow-50 p-2 rounded">
-              ⚠️ Clearing data will permanently delete all stored information. This action cannot be undone.
-            </div>
-          </div>
-        </div>
-      )}
+     
 
       {/* Message */}
       {message && (
